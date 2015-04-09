@@ -1,0 +1,35 @@
+apply plugin: "groovy"
+apply plugin: "maven"
+
+group = "org.fourthline"
+version = "1.0"
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    deployerJars
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+
+    testCompile "org.testng:testng:6.8.8"
+
+    deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        configuration = configurations.deployerJars
+        repository(url: "scp://cb@4thline.org:2222/webroot/vhosts/8080/4thline.org/m2/") {
+            authentication(privateKey: "/Users/cb/.ssh/id_dsa")
+        }
+    }
+}
+
+test {
+    useTestNG()
+}
